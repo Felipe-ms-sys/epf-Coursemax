@@ -1,3 +1,4 @@
+import json
 from bottle import Bottle, request, response
 from .base_controller import BaseController
 from services.disciplina_service import DisciplinaService
@@ -14,28 +15,22 @@ class DisciplinaController(BaseController):
         self.app.route('/disciplinas/remover/<id:int>', method='POST', callback=self.remover)
 
     def dashboard(self):
-        user_id = request.get_cookie("user_id", secret='sua-chave-secreta-aqui')
-        if not user_id:
-            self.redirect('/login')
-            return
-            
-        disciplinas = self.disciplina_service.listar_por_usuario(int(user_id))
+        user_id = request.get_cookie("user_id", secret='sua-chave-secreta-aqui') or 1
         
-        return self.render('dashboard', disciplines=disciplinas, user_name="Estudante")
+        disciplinas_objs = self.disciplina_service.listar_por_usuario(int(user_id))
+        
+        disciplinas_dicts = [d.to_dict() for d in disciplinas_objs]
+        
+        return self.render('dashboard', 
+                           disciplines_json=json.dumps(disciplinas_dicts), 
+                           user_name="Estudante")
 
     def adicionar(self):
-        user_id = request.get_cookie("user_id", secret='sua-chave-secreta-aqui')
-        if not user_id:
-            self.redirect('/login')
-        
+        user_id = request.get_cookie("user_id", secret='sua-chave-secreta-aqui') or 1
         nome = request.forms.get('disciplineName')
-        self.disciplina_service.criar_disciplina(int(user_id), nome, horas=60, num_provas=2, metodo='Padrao')
+        color = request.forms.get('disciplineColor')
         
-        self.redirect('/dashboard')
-
-    def remover(self, id):
-        self.disciplina_service.remover(id)
-        self.redirect('/dashboard')
+        pass 
 
 disciplina_routes = Bottle()
 disciplina_controller = DisciplinaController(disciplina_routes)
