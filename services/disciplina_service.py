@@ -5,30 +5,28 @@ class DisciplinaService:
         self.disciplina_model = DisciplinaModel()
 
     def listar_por_usuario(self, id_usuario):
-        return self.disciplina_model.get_by_user_id(id_usuario)
+        return self.disciplina_model.listar_por_usuario(id_usuario)
 
-    def criar_disciplina(self, id_usuario, nome, horas, num_provas, metodo):
-        if not nome or not horas:
-            raise ValueError("Dados obrigatórios faltando")
-
-        try:
-            horas = int(horas)
-            num_provas = int(num_provas)
-        except ValueError:
-            raise ValueError("Horas e provas devem ser números")
+    def criar_disciplina(self, id_usuario, nome, color, horas, num_provas, metodo):
+        if not nome:
+            raise ValueError("Nome da disciplina é obrigatório")
 
         todas = self.disciplina_model.pegar_todas()
         novo_id = max([d.id for d in todas], default=0) + 1
 
-        nova_disciplina = Disciplina(novo_id, id_usuario, nome, horas, num_provas, metodo)
+        nova_disciplina = Disciplina(
+            id=novo_id,
+            id_usuario=id_usuario,
+            nome=nome,
+            color=color,
+            horas=horas,
+            presencas=0,
+            faltas=0,
+            modulos=[]
+        )
+        
         self.disciplina_model.adicionar(nova_disciplina)
         return nova_disciplina
     
-    def buscar_por_id(self, id_disciplina):
-        return self.disciplina_model.buscar_por_id(id_disciplina)
-        
-    def atualizar(self, disciplina):
-        self.disciplina_model.atualizar(disciplina)
-
     def remover(self, id_disciplina):
         self.disciplina_model.remover(id_disciplina)
