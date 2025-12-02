@@ -118,7 +118,7 @@
         </form>
 
         <div class="login-link">
-            Já tem uma conta? <a href="login_screen_updated.html">Fazer Login</a>
+            Já tem uma conta? <a href="/login">Fazer Login</a>
         </div>
     </div>
 

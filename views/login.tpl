@@ -160,7 +160,7 @@
         </form>
 
         <div class="register-link">
-            Não tem uma conta? <a onclick="alert('Ir para página de cadastro')">Cadastre-se</a>
+            Não tem uma conta? <a href="/cadastro">Cadastre-se</a>
         </div>
     </div>
 
