@@ -1,5 +1,10 @@
 from bottle import Bottle
 from config import Config
+from bottle import static_file, route
+
+@route('/static/<filepath:path>')
+def server_static(filepath):
+    return static_file(filepath, root='./static')
 
 class App:
     def __init__(self):
