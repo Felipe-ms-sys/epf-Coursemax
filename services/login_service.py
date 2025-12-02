@@ -1,5 +1,4 @@
-from models.usuario 
-import UsuarioModel, Usuario
+from models.usuario import UsuarioModel, Usuario
 
 class LoginService:
     def __init__(self):

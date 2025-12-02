@@ -1,5 +1,4 @@
-from models.usuario 
-import UsuarioModel, Usuario
+from models.usuario import UsuarioModel, Usuario
 
 class CadastroService:
     DOMINIOS_PERMITIDOS = ['gmail.com', 'hotmail.com', 'outlook.com', 'unb.br']
