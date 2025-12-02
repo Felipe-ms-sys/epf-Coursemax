@@ -284,12 +284,9 @@
 </div>
 
 <script>
-    let disciplines = JSON.parse(localStorage.getItem('disciplines')) || [
-        { id: 1, name: 'Matemática', color: '#3498db', totalClasses: 40, presences: 30, absences: 2, modules: [{id: 1, text: 'Funções', done: true}, {id: 2, text: 'Logaritmos', done: false}] },
-        { id: 2, name: 'Física', color: '#e74c3c', totalClasses: 40, presences: 35, absences: 0, modules: [{id: 3, text: 'Cinemática', done: false}] },
-        { id: 3, name: 'Química', color: '#9b59b6', totalClasses: 30, presences: 28, absences: 1, modules: [] }
-    ];
+        let disciplines = {{!disciplines_json}}; 
 
+            if (!disciplines) disciplines = [];
     let currentId = null;
 
     window.onload = function() {
