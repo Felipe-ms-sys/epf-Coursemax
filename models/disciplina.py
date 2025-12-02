@@ -4,30 +4,26 @@ import os
 DATA_DIR = os.path.join(os.path.dirname(__file__), '..', 'data')
 
 class Disciplina:
-    def __init__(self, id, id_usuario, nome, horas, num_provas, metodo_avaliacao, notas=None):
+    def __init__(self, id, id_usuario, nome, color, horas=60, presencas=0, faltas=0, modulos=None):
         self.id = id
         self.id_usuario = id_usuario
         self.nome = nome
+        self.color = color
         self.horas = int(horas)
-        self.num_provas = int(num_provas)
-        self.metodo_avaliacao = metodo_avaliacao
-        self.faltas_permitidas = int(self.horas * 0.25)
-
-        if notas:
-            self.notas = notas
-        else:
-            self.notas = {f"P{i+1}": None for i in range(self.num_provas)}
+        self.presencas = int(presencas)
+        self.faltas = int(faltas)
+        self.modulos = modulos if modulos else [] 
 
     def to_dict(self):
         return {
             'id': self.id,
             'id_usuario': self.id_usuario,
             'nome': self.nome,
+            'color': self.color,
             'horas': self.horas,
-            'faltas_permitidas': self.faltas_permitidas,
-            'num_provas': self.num_provas,
-            'metodo_avaliacao': self.metodo_avaliacao,
-            'notas': self.notas
+            'presencas': self.presencas,
+            'faltas': self.faltas,
+            'modules': self.modulos 
         }
 
     @classmethod
@@ -36,10 +32,11 @@ class Disciplina:
             id=data['id'],
             id_usuario=data['id_usuario'],
             nome=data['nome'],
-            horas=data['horas'],
-            num_provas=data['num_provas'],
-            metodo_avaliacao=data['metodo_avaliacao'],
-            notas=data.get('notas')
+            color=data.get('color', '#3498db'),
+            horas=data.get('horas', 60),
+            presencas=data.get('presencas', 0),
+            faltas=data.get('faltas', 0),
+            modulos=data.get('modules', [])
         )
 
 class DisciplinaModel:
@@ -64,26 +61,13 @@ class DisciplinaModel:
         with open(self.FILE_PATH, 'w', encoding='utf-8') as f:
             json.dump([d.to_dict() for d in self.disciplinas], f, indent=4, ensure_ascii=False)
 
-    def pegar_todas(self):
-        return self.disciplinas
-        
-    def get_by_user_id(self, id_usuario):
+    def listar_por_usuario(self, id_usuario):
         return [d for d in self.disciplinas if d.id_usuario == id_usuario]
-
-    def buscar_por_id(self, id_disciplina):
-        return next((d for d in self.disciplinas if d.id == id_disciplina), None)
 
     def adicionar(self, disciplina):
         self.disciplinas.append(disciplina)
         self._salvar()
 
-    def atualizar(self, disciplina_atualizada):
-        for i, d in enumerate(self.disciplinas):
-            if d.id == disciplina_atualizada.id:
-                self.disciplinas[i] = disciplina_atualizada
-                self._salvar()
-                break
-    
     def remover(self, id_disciplina):
         self.disciplinas = [d for d in self.disciplinas if d.id != id_disciplina]
         self._salvar()
