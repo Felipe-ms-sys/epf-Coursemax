@@ -141,7 +141,7 @@
         <h1>Bem-vindo!</h1>
         <p class="subtitle">Organize seus estudos de forma simples.</p>
 
-        <form id="loginForm" onsubmit="handleLogin(event)">
+        <form action="/login" method="POST">
             <div class="form-group">
                 <label for="email">E-mail</label>
                 <input type="email" id="email" placeholder="seu@email.com" required>
