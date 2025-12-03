@@ -47,7 +47,7 @@
         }
 
         .logo-area img { 
-            width: 50px; 
+            width: 50px;
             height: 50px;
             border-radius: 50%;
             object-fit: cover;
@@ -329,11 +329,12 @@
                     </div>
                     <div class="stat-desc">Faltas</div>
                 </div>
-                                <div class="stat-box">
-                                    <div class="stat-num" id="percentage">0%</div>
-                                    <div class="stat-desc">Frequência</div>
-                                </div>
-                            </div>
+                            
+                <div class="stat-box">
+                    <div class="stat-num" id="percentage">0%</div>
+                    <div class="stat-desc">Frequência</div>
+                </div>
+            </div>
 
             <div id="frequencyMessage" style="margin-bottom: 20px; padding: 10px; border-radius: 8px; font-size: 14px; text-align: center;"></div>
 
@@ -358,6 +359,13 @@
             </form>
 
         </div>
+
+        <div style="margin-top: 25px; border-top: 1px solid #eee; padding-top: 15px; text-align: right;">
+            <button class="btn-logout" onclick="deleteDiscipline()" style="font-size: 14px;">
+                Excluir Matéria
+            </button>
+        </div>
+
     </div>
 </div>
 
@@ -543,19 +551,15 @@
 
     function changeAttendance(type, delta) {
         const disc = disciplines.find(d => d.id === currentId);
-        
         if (type === 'presencas') {
             if (delta < 0 && disc.presencas <= 0) return;
-            
             if (delta > 0 && (disc.presencas + disc.faltas >= disc.horas)) {
                 alert('Limite de aulas atingido! Aumente o total de aulas previstas.');
                 return;
             }
             disc.presencas += delta;
-            
         } else if (type === 'faltas') {
             if (delta < 0 && disc.faltas <= 0) return;
-
             if (delta > 0 && (disc.presencas + disc.faltas >= disc.horas)) {
                 alert('Limite de aulas atingido! Aumente o total de aulas previstas.');
                 return;
@@ -568,7 +572,6 @@
 
     function renderExamsList(data) {
         const list = document.getElementById('examsList');
-        
         list.innerHTML = '';
 
         if(!data.provas) data.provas = [];
@@ -606,7 +609,6 @@
             name: nameInput.value,
             value: parseFloat(valueInput.value)
         });
-
         nameInput.value = '';
         valueInput.value = '';
         
@@ -636,8 +638,17 @@
         window.location.href = '/logout';
     }
 
+    function deleteDiscipline() {
+        if (!currentId) return;
 
-
+        if (confirm('Tem certeza que deseja excluir esta matéria permanentemente? Todo o histórico de presenças e notas será perdido.')) {
+            const form = document.createElement('form');
+            form.method = 'POST';
+            form.action = '/disciplinas/remover/' + currentId;
+            document.body.appendChild(form);
+            form.submit();
+        }
+    }
 
 </script>
 
