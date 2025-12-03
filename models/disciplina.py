@@ -18,7 +18,7 @@ class Disciplina:
         return {
             'id': self.id,
             'id_usuario': self.id_usuario,
-            'name': self.nome,      
+            'name': self.nome,       
             'color': self.color,
             'horas': self.horas,
             'presencas': self.presencas,
@@ -28,10 +28,12 @@ class Disciplina:
 
     @classmethod
     def from_dict(cls, data):
+        nome_disciplina = data.get('name') or data.get('nome')
+        
         return cls(
             id=data['id'],
             id_usuario=data['id_usuario'],
-            nome=data['nome'],
+            nome=nome_disciplina,     
             color=data.get('color', '#3498db'),
             horas=data.get('horas', 60),
             presencas=data.get('presencas', 0),
