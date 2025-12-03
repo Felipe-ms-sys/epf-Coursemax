@@ -51,6 +51,10 @@ class User:
     def hash_password(password):
         return hashlib.sha256(password.encode()).hexdigest()
 
+    @staticmethod
+    def verify_password(stored_password, provided_password):
+        return stored_password == hashlib.sha256(provided_password.encode()).hexdigest()
+
 
 class UserModel:
     FILE_PATH = os.path.join(DATA_DIR, 'users.json')
@@ -66,7 +70,7 @@ class UserModel:
         try:
             with open(self.FILE_PATH, 'r', encoding='utf-8') as f:
                 data = json.load(f)
-                return [User(**item) for item in data]
+                return [User.from_dict(item) for item in data]
         except (json.JSONDecodeError, FileNotFoundError):
             return []
 
