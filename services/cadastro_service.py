@@ -24,6 +24,8 @@ class CadastroService:
     def cadastrar_usuario(self, nome, email, cpf, senha):
         if not nome or not senha:
             raise ValueError("Nome e Senha são obrigatórios")
+        
+        email = email.strip().lower()
 
         if not self._validar_email(email):
             raise ValueError(f"Domínio de email inválido. Permitidos: {', '.join(self.DOMINIOS_PERMITIDOS)}")
@@ -32,7 +34,7 @@ class CadastroService:
             raise ValueError("CPF deve conter 11 dígitos numéricos")
 
         users = self.user_model.get_all()
-        if any(u.email == email for u in users):
+        if any(u.email.lower() == email for u in users):
             raise ValueError("Email já cadastrado")
 
         last_id = max([u.id for u in users], default=0) if users else 0

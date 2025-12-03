@@ -18,7 +18,7 @@ class Disciplina:
         return {
             'id': self.id,
             'id_usuario': self.id_usuario,
-            'name': self.nome,       
+            'name': self.nome,
             'color': self.color,
             'horas': self.horas,
             'presencas': self.presencas,
@@ -29,11 +29,10 @@ class Disciplina:
     @classmethod
     def from_dict(cls, data):
         nome_disciplina = data.get('name') or data.get('nome')
-        
         return cls(
             id=data['id'],
             id_usuario=data['id_usuario'],
-            nome=nome_disciplina,     
+            nome=nome_disciplina,
             color=data.get('color', '#3498db'),
             horas=data.get('horas', 60),
             presencas=data.get('presencas', 0),
@@ -59,30 +58,36 @@ class DisciplinaModel:
         except (json.JSONDecodeError, FileNotFoundError):
             return []
 
-    def _salvar(self):
+    def _save(self):
         with open(self.FILE_PATH, 'w', encoding='utf-8') as f:
             json.dump([d.to_dict() for d in self.disciplinas], f, indent=4, ensure_ascii=False)
 
     def pegar_todas(self):
+        self.disciplinas = self._carregar() 
         return self.disciplinas
 
     def listar_por_usuario(self, id_usuario):
+        self.disciplinas = self._carregar()  
         return [d for d in self.disciplinas if d.id_usuario == id_usuario]
 
     def buscar_por_id(self, id_disciplina):
+        self.disciplinas = self._carregar() 
         return next((d for d in self.disciplinas if d.id == id_disciplina), None)
 
     def adicionar(self, disciplina):
+        self.disciplinas = self._carregar() 
         self.disciplinas.append(disciplina)
-        self._salvar()
+        self._save()
     
     def atualizar(self, disciplina_atualizada):
+        self.disciplinas = self._carregar() 
         for i, d in enumerate(self.disciplinas):
             if d.id == disciplina_atualizada.id:
                 self.disciplinas[i] = disciplina_atualizada
-                self._salvar()
+                self._save()
                 break
 
     def remover(self, id_disciplina):
+        self.disciplinas = self._carregar() 
         self.disciplinas = [d for d in self.disciplinas if d.id != id_disciplina]
-        self._salvar()
+        self._save()

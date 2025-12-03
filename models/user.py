@@ -5,7 +5,7 @@ import hashlib
 DATA_DIR = os.path.join(os.path.dirname(__file__), '..', 'data')
 
 class User:
-    DOMINIOS_EMAIL = ['gmail.com', 'hotmail.com', 'outlook.com', 'yahoo.com']
+    DOMINIOS_EMAIL = ['gmail.com', 'hotmail.com', 'outlook.com', 'yahoo.com', 'unb.br']
 
     def __init__(self, id, email, cpf, name=None, nome=None, password=None, senha=None, **kwargs):
         self.id = id
@@ -79,16 +79,20 @@ class UserModel:
             json.dump([u.to_dict() for u in self.users], f, indent=4, ensure_ascii=False)
 
     def get_all(self):
+        self.users = self._load() 
         return self.users
 
     def get_by_id(self, user_id):
+        self.users = self._load() 
         return next((u for u in self.users if u.id == user_id), None)
 
     def add_user(self, user):
+        self.users = self._load() 
         self.users.append(user)
         self._save()
 
     def update_user(self, updated_user):
+        self.users = self._load() 
         for i, user in enumerate(self.users):
             if user.id == updated_user.id:
                 self.users[i] = updated_user
@@ -96,5 +100,6 @@ class UserModel:
                 break
 
     def delete_user(self, user_id):
+        self.users = self._load() 
         self.users = [u for u in self.users if u.id != user_id]
         self._save()

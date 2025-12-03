@@ -141,6 +141,12 @@
         <h1>Bem-vindo!</h1>
         <p class="subtitle">Organize seus estudos de forma simples.</p>
 
+        % if defined('error') and error:
+            <div style="background-color: #ffcccc; color: #cc0000; padding: 10px; border-radius: 5px; margin-bottom: 15px; text-align: center;">
+                {{error}}
+            </div>
+        % end
+
         <form action="/login" method="POST">
             <div class="form-group">
                 <label for="email">E-mail</label>
