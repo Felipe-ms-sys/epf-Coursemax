@@ -581,7 +581,7 @@
                     <div class="module-item" style="justify-content: space-between;">
                         <span class="module-text">
                             <strong>${p.name}</strong> 
-                            <span style="color: #666; font-size: 0.9em;">(Valor: ${p.value})</span>
+                            <span style="color: #666; font-size: 0.9em;">(Nota: ${p.value})</span>
                         </span>
                         <button class="btn-icon" onclick="deleteExam(${p.id})">🗑️</button>
                     </div>
