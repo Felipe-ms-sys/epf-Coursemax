@@ -4,8 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login - App de Estudos</title>
+    <link rel="icon" type="image/jpg" href="/static/img/logo-new.jpg">
     <style>
-
         :root {
             --primary-color: #1ABC9C;
             --primary-dark: #16a085;
@@ -32,7 +32,7 @@
             align-items: center;
             justify-content: center;
             padding: 20px;
-            overflow-y: auto; 
+            overflow-y: auto;
         }
 
         .login-container {
@@ -50,8 +50,19 @@
             to { opacity: 1; transform: translateY(0); }
         }
 
-        .logo-container { text-align: center; margin-bottom: 25px; }
-        .logo { width: 100px; height: 100px; }
+        .logo-container { 
+            text-align: center;
+            margin-bottom: 25px; 
+        }
+        
+        /* Estilo da Logo Nova */
+        .logo { 
+            width: 100px; 
+            height: 100px;
+            border-radius: 50%;
+            object-fit: cover; /* Garante que a imagem não distorça */
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
 
         h1 {
             text-align: center;
@@ -114,8 +125,12 @@
 
         .btn-login:active { transform: translateY(0); }
 
-        .register-link, .forgot-password { text-align: center; margin-top: 20px; font-size: 14px; color: var(--text-light); }
-        .forgot-password { text-align: right; margin-top: 8px; margin-bottom: 20px; font-size: 13px; }
+        .register-link, .forgot-password { 
+            text-align: center; margin-top: 20px; font-size: 14px; color: var(--text-light);
+        }
+        .forgot-password { 
+            text-align: right; margin-top: 8px; margin-bottom: 20px; font-size: 13px;
+        }
 
         a {
             color: var(--primary-color);
@@ -125,17 +140,16 @@
             transition: color 0.2s;
         }
 
-        a:hover { color: var(--primary-dark); text-decoration: underline; }
+        a:hover { 
+            color: var(--primary-dark);
+            text-decoration: underline; 
+        }
     </style>
 </head>
 <body>
     <div class="login-container">
         <div class="logo-container">
-            <svg class="logo" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
-                <circle cx="100" cy="100" r="90" fill="#2C3E50"/>
-                <circle cx="100" cy="100" r="85" fill="none" stroke="#1ABC9C" stroke-width="4"/>
-                <path d="M 65 105 L 95 135 L 145 75" fill="none" stroke="#1ABC9C" stroke-width="14" stroke-linecap="round" stroke-linejoin="round"/>
-            </svg>
+            <img src="/static/img/logo-new.jpg" alt="Logo CourseMax" class="logo">
         </div>
 
         <h1>Bem-vindo!</h1>
@@ -166,30 +180,16 @@
         </form>
 
         <div class="register-link">
-            Não tem uma conta? <a href="/cadastro">Cadastre-se</a>
+            Não tem uma conta?
+            <a href="/cadastro">Cadastre-se</a>
         </div>
     </div>
 
     <script>
         function handleLogin(event) {
-            event.preventDefault();
+            event.preventDefault(); // Nota: O formulário usa action="/login", esse JS é apenas decorativo se não for usado.
             const email = document.getElementById('email').value;
-            
-            if (email) {
-                const userName = email.split('@')[0];
-                const formattedName = userName.charAt(0).toUpperCase() + userName.slice(1);
-                
-                localStorage.setItem('userName', formattedName);
-                localStorage.setItem('userEmail', email);
-                
-                const container = document.querySelector('.login-container');
-                container.style.transform = 'translateY(-20px)';
-                container.style.opacity = '0';
-                
-                setTimeout(() => {
-                    window.location.href = 'student_dashboard.html';
-                }, 300);
-            }
+            // A lógica real de login é feita pelo backend (Bottle)
         }
     </script>
 </body>
