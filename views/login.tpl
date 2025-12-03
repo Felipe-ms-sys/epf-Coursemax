@@ -6,6 +6,7 @@
     <title>Login - App de Estudos</title>
     <link rel="icon" type="image/jpg" href="/static/img/logo-new.jpg">
     <style>
+
         :root {
             --primary-color: #1ABC9C;
             --primary-dark: #16a085;
@@ -50,17 +51,14 @@
             to { opacity: 1; transform: translateY(0); }
         }
 
-        .logo-container { 
-            text-align: center;
-            margin-bottom: 25px; 
-        }
+        .logo-container { text-align: center; margin-bottom: 25px; }
         
         /* Estilo da Logo Nova */
         .logo { 
             width: 100px; 
             height: 100px;
             border-radius: 50%;
-            object-fit: cover; /* Garante que a imagem não distorça */
+            object-fit: cover;
             box-shadow: 0 4px 10px rgba(0,0,0,0.1);
         }
 
@@ -125,12 +123,7 @@
 
         .btn-login:active { transform: translateY(0); }
 
-        .register-link, .forgot-password { 
-            text-align: center; margin-top: 20px; font-size: 14px; color: var(--text-light);
-        }
-        .forgot-password { 
-            text-align: right; margin-top: 8px; margin-bottom: 20px; font-size: 13px;
-        }
+        .register-link { text-align: center; margin-top: 20px; font-size: 14px; color: var(--text-light); }
 
         a {
             color: var(--primary-color);
@@ -172,10 +165,6 @@
                 <input type="password" id="password" name="password" placeholder="••••••••" required>
             </div>
 
-            <div class="forgot-password">
-                <a href="#">Esqueceu a senha?</a>
-            </div>
-
             <button type="submit" class="btn-login">Entrar</button>
         </form>
 
@@ -187,8 +176,7 @@
 
     <script>
         function handleLogin(event) {
-            event.preventDefault(); // Nota: O formulário usa action="/login", esse JS é apenas decorativo se não for usado.
-            const email = document.getElementById('email').value;
+            event.preventDefault(); 
             // A lógica real de login é feita pelo backend (Bottle)
         }
     </script>
