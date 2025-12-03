@@ -15,6 +15,7 @@ class DisciplinaController(BaseController):
         self.app.route('/dashboard', method='GET', callback=self.dashboard)
         self.app.route('/disciplinas/adicionar', method='POST', callback=self.adicionar)
         self.app.route('/disciplinas/remover/<id:int>', method='POST', callback=self.remover)
+        self.app.route('/disciplinas/salvar', method='POST', callback=self.salvar_progresso)
 
     def dashboard(self):
         user_id = request.get_cookie("user_id", secret='sua-chave-secreta-aqui')
@@ -51,6 +52,18 @@ class DisciplinaController(BaseController):
             metodo='Padrao'
         )
         self.redirect('/dashboard')
+
+    def salvar_progresso(self):
+        dados = request.json
+        if not dados:
+            return {'success': False, 'error': 'Sem dados'}
+        
+        try:
+            self.disciplina_service.atualizar(dados)
+            return {'success': True}
+        except Exception as e:
+            print(f"Erro ao salvar: {e}")
+            return {'success': False, 'error': str(e)}
 
     def remover(self, id):
         self.disciplina_service.remover(id)
