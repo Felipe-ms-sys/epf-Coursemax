@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Painel de Estudos</title>
+    <title>CourseMax</title>
     <link rel="icon" type="image/jpg" href="/static/img/logo-new.jpg">
     <style>
         :root {
@@ -46,7 +46,6 @@
             backdrop-filter: blur(10px);
         }
 
-        /* Ajuste para a imagem da logo */
         .logo-area img { 
             width: 50px; 
             height: 50px;
@@ -298,6 +297,7 @@
         <div class="tabs">
             <button class="tab active" onclick="setTab('content')">Conteúdos</button>
             <button class="tab" onclick="setTab('frequency')">Frequência</button>
+            <button class="tab" onclick="setTab('grades')">Provas</button>
         </div>
 
         <div id="tab-content" class="tab-content active">
@@ -345,6 +345,18 @@
             <div style="margin-top: 20px; text-align: center;">
                 <small style="color: #999">Total de aulas previstas: <input type="number" id="editTotalClasses" style="width: 60px; padding: 5px;" onchange="updateTotalConfig()"></small>
             </div>
+        </div>
+
+        <div id="tab-grades" class="tab-content">
+            
+            <div id="examsList" style="margin-bottom: 20px;"></div>
+
+            <form class="add-form" onsubmit="addExam(event)">
+                <input type="text" id="newExamName" placeholder="Nome (ex: P1, PF)" required style="flex: 2;">
+                <input type="number" id="newExamValue" placeholder="Nota" required style="flex: 1;" step="0.1">
+                <button type="submit" class="btn-primary">Adicionar</button>
+            </form>
+
         </div>
     </div>
 </div>
@@ -423,10 +435,15 @@
     function openModal(id) {
         currentId = id;
         const data = disciplines.find(d => d.id === id);
+        
         document.getElementById('modalTitle').textContent = data.name;
         document.getElementById('modalTitle').style.color = data.color;
+
         renderModuleList(data);
         updateModalStats();
+        
+        renderExamsList(data); 
+
         document.getElementById('detailsModal').classList.add('active');
     }
 
@@ -549,6 +566,63 @@
         save(); 
     }
 
+    function renderExamsList(data) {
+        const list = document.getElementById('examsList');
+        
+        list.innerHTML = '';
+
+        if(!data.provas) data.provas = [];
+
+        if(data.provas.length === 0) {
+            list.innerHTML = '<p style="text-align:center; color:#999; margin: 20px 0;">Nenhuma prova cadastrada.</p>';
+        } else {
+            data.provas.forEach(p => {
+                list.innerHTML += `
+                    <div class="module-item" style="justify-content: space-between;">
+                        <span class="module-text">
+                            <strong>${p.name}</strong> 
+                            <span style="color: #666; font-size: 0.9em;">(Valor: ${p.value})</span>
+                        </span>
+                        <button class="btn-icon" onclick="deleteExam(${p.id})">🗑️</button>
+                    </div>
+                `;
+            });
+        }
+        
+    }
+
+    function addExam(e) {
+        e.preventDefault();
+        const nameInput = document.getElementById('newExamName');
+        const valueInput = document.getElementById('newExamValue');
+        
+        if(!nameInput.value || !valueInput.value) return;
+
+        const disc = disciplines.find(d => d.id === currentId);
+        if (!disc.provas) disc.provas = [];
+
+        disc.provas.push({
+            id: Date.now(),
+            name: nameInput.value,
+            value: parseFloat(valueInput.value)
+        });
+
+        nameInput.value = '';
+        valueInput.value = '';
+        
+        save(); 
+        renderExamsList(disc);
+    }
+
+    function deleteExam(examId) {
+        if(confirm('Remover esta prova?')) {
+            const disc = disciplines.find(d => d.id === currentId);
+            disc.provas = disc.provas.filter(p => p.id !== examId);
+            save();
+            renderExamsList(disc);
+        }
+    }
+
     function updateTotalConfig() {
         const val = parseInt(document.getElementById('editTotalClasses').value);
         if(val > 0) {
@@ -561,6 +635,10 @@
     function logout() {
         window.location.href = '/logout';
     }
+
+
+
+
 </script>
 
 </body>

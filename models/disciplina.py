@@ -4,7 +4,7 @@ import os
 DATA_DIR = os.path.join(os.path.dirname(__file__), '..', 'data')
 
 class Disciplina:
-    def __init__(self, id, id_usuario, nome, color, horas=60, presencas=0, faltas=0, modulos=None):
+    def __init__(self, id, id_usuario, nome, color, horas=60, presencas=0, faltas=0, modulos=None, provas = None):
         self.id = id
         self.id_usuario = id_usuario
         self.nome = nome
@@ -13,6 +13,7 @@ class Disciplina:
         self.presencas = int(presencas)
         self.faltas = int(faltas)
         self.modulos = modulos if modulos else [] 
+        self.provas = provas if provas else []
 
     def to_dict(self):
         return {
@@ -23,7 +24,8 @@ class Disciplina:
             'horas': self.horas,
             'presencas': self.presencas,
             'faltas': self.faltas,
-            'modules': self.modulos 
+            'modules': self.modulos,
+            'provas': self.provas
         } 
 
     @classmethod
@@ -37,7 +39,8 @@ class Disciplina:
             horas=data.get('horas', 60),
             presencas=data.get('presencas', 0),
             faltas=data.get('faltas', 0),
-            modulos=data.get('modules', [])
+            modulos=data.get('modules', []),
+            provas=data.get('provas', [])
         )
 
 class DisciplinaModel:

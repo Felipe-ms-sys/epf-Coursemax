@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login - App de Estudos</title>
+    <title>CourseMax</title>
     <link rel="icon" type="image/jpg" href="/static/img/logo-new.jpg">
     <style>
 
