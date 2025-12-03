@@ -229,6 +229,33 @@
         .freq-stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(100px, 1fr)); gap: 15px; margin-bottom: 20px; }
         .stat-box { background: var(--grey-light); padding: 15px; border-radius: 10px; text-align: center; }
         .stat-num { font-size: 24px; font-weight: 800; color: var(--secondary-color); }
+        .stat-row {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px; 
+        }
+
+        .btn-decrease {
+            background: none;
+            border: 1px solid #ddd;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            cursor: pointer;
+            color: #777;
+            font-size: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+        }
+
+        .btn-decrease:hover {
+            background: #f1f1f1;
+            color: #333;
+            border-color: #bbb;
+        }
         .stat-desc { font-size: 12px; color: #777; margin-top: 5px; text-transform: uppercase; letter-spacing: 1px; }
 
         .freq-actions { display: flex; gap: 10px; }
@@ -288,18 +315,25 @@
                     <div class="stat-desc">Aulas Totais</div>
                 </div>
                 <div class="stat-box">
-                    <div class="stat-num" style="color: var(--success)" id="presentCount">0</div>
+                    <div class="stat-row">
+                        <div class="stat-num" style="color: var(--success)" id="presentCount">0</div>
+                        <button class="btn-decrease" onclick="changeAttendance('presencas', -1)" title="Remover presença">▼</button>
+                    </div>
                     <div class="stat-desc">Presenças</div>
                 </div>
+
                 <div class="stat-box">
-                    <div class="stat-num" style="color: var(--danger)" id="absentCount">0</div>
+                    <div class="stat-row">
+                        <div class="stat-num" style="color: var(--danger)" id="absentCount">0</div>
+                        <button class="btn-decrease" onclick="changeAttendance('faltas', -1)" title="Remover falta">▼</button>
+                    </div>
                     <div class="stat-desc">Faltas</div>
                 </div>
-                <div class="stat-box">
-                    <div class="stat-num" id="percentage">0%</div>
-                    <div class="stat-desc">Frequência</div>
-                </div>
-            </div>
+                                <div class="stat-box">
+                                    <div class="stat-num" id="percentage">0%</div>
+                                    <div class="stat-desc">Frequência</div>
+                                </div>
+                            </div>
 
             <div id="frequencyMessage" style="margin-bottom: 20px; padding: 10px; border-radius: 8px; font-size: 14px; text-align: center;"></div>
 
@@ -486,14 +520,33 @@
     }
 
     function addAttendance(isPresent) {
+        if(isPresent) changeAttendance('presencas', 1);
+        else changeAttendance('faltas', 1);
+    }
+
+    function changeAttendance(type, delta) {
         const disc = disciplines.find(d => d.id === currentId);
-        if(disc.presencas + disc.faltas >= disc.horas) {
-            alert('Você atingiu o limite de aulas cadastradas para esta matéria. Aumente o "Total de aulas previstas" abaixo.');
-            return;
+        
+        if (type === 'presencas') {
+            if (delta < 0 && disc.presencas <= 0) return;
+            
+            if (delta > 0 && (disc.presencas + disc.faltas >= disc.horas)) {
+                alert('Limite de aulas atingido! Aumente o total de aulas previstas.');
+                return;
+            }
+            disc.presencas += delta;
+            
+        } else if (type === 'faltas') {
+            if (delta < 0 && disc.faltas <= 0) return;
+
+            if (delta > 0 && (disc.presencas + disc.faltas >= disc.horas)) {
+                alert('Limite de aulas atingido! Aumente o total de aulas previstas.');
+                return;
+            }
+            disc.faltas += delta;
         }
-        if(isPresent) disc.presencas++;
-        else disc.faltas++;
-        save();
+
+        save(); 
     }
 
     function updateTotalConfig() {
