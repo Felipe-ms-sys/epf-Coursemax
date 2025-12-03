@@ -56,7 +56,6 @@
         
         .connector { position: absolute; height: 2px; width: 40px; background: #eee; top: 115px; z-index: 0; }
 
-        /* FORMULÁRIO */
         .form-group { margin-bottom: 15px; }
         label { display: block; margin-bottom: 5px; color: var(--text-dark); font-weight: 600; font-size: 14px; }
         
@@ -99,6 +98,11 @@
             </div>
 
             <div class="form-group">
+                <label>CPF</label>
+                <input type="text" id="cpf" placeholder="000.000.000-00" required maxlength="14" oninput="mascaraCPF(this)">
+            </div>
+
+            <div class="form-group">
                 <label>E-mail</label>
                 <input type="email" id="email" placeholder="seu@email.com" required>
             </div>
@@ -123,10 +127,23 @@
     </div>
 
     <script>
+
+        function mascaraCPF(i){
+            var v = i.value;
+            if(isNaN(v[v.length-1])){
+                i.value = v.substring(0, v.length-1);
+                return;
+            }
+            i.setAttribute("maxlength", "14");
+            if (v.length == 3 || v.length == 7) i.value += ".";
+            if (v.length == 11) i.value += "-";
+        }
+
         function goToStep2(e) {
             e.preventDefault();
             
             const name = document.getElementById('name').value;
+            const cpf = document.getElementById('cpf').value;
             const email = document.getElementById('email').value;
             const pass = document.getElementById('password').value;
             const confirm = document.getElementById('confirmPassword').value;
@@ -136,7 +153,16 @@
                 return;
             }
 
-            const userData = { name, email, pass };
+            // Remove pontos e traços do CPF antes de salvar
+            const cpfLimpo = cpf.replace(/\D/g, '');
+
+            if (cpfLimpo.length !== 11) {
+                alert('CPF inválido! Digite os 11 números.');
+                return;
+            }
+
+            // Salva CPF junto com os outros dados
+            const userData = { name, cpf: cpfLimpo, email, pass };
             localStorage.setItem('tempUserData', JSON.stringify(userData));
 
             window.location.href = '/cadastro/disciplinas';
