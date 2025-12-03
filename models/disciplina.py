@@ -18,13 +18,13 @@ class Disciplina:
         return {
             'id': self.id,
             'id_usuario': self.id_usuario,
-            'nome': self.nome,
+            'name': self.nome,      
             'color': self.color,
             'horas': self.horas,
             'presencas': self.presencas,
             'faltas': self.faltas,
             'modules': self.modulos 
-        }
+        } 
 
     @classmethod
     def from_dict(cls, data):
