@@ -30,13 +30,13 @@ class CadastroController(BaseController):
         user_data = data.get('user')
         disciplines_data = data.get('disciplines')
 
-        cpf_provisorio = '00000000000'
+        cpf_real = user_data.get('cpf')
 
         try:
             novo_usuario = self.cadastro_service.cadastrar_usuario(
                 user_data['name'], 
                 user_data['email'], 
-                cpf_provisorio, 
+                cpf_real, 
                 user_data['pass']
             )
             
@@ -49,10 +49,6 @@ class CadastroController(BaseController):
                     num_provas=2, 
                     metodo='Padrao'
                  )
-                 
-            return {'success': True}
-
-                 
                  
             return {'success': True}
 
