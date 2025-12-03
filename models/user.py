@@ -49,11 +49,24 @@ class User:
 
     @staticmethod
     def hash_password(password):
-        return hashlib.sha256(password.encode()).hexdigest()
+        salt = os.urandom(16).hex()
+        combinacao = salt + password
+        hash_result = hashlib.sha256(combinacao.encode()).hexdigest()
+        return f"{salt}${hash_result}"
 
     @staticmethod
     def verify_password(stored_password, provided_password):
-        return stored_password == hashlib.sha256(provided_password.encode()).hexdigest()
+        try:
+            if '$' not in stored_password:
+                return stored_password == hashlib.sha256(provided_password.encode()).hexdigest()
+
+            salt, hash_armazenado = stored_password.split('$')
+            combinacao = salt + provided_password
+            novo_calculo = hashlib.sha256(combinacao.encode()).hexdigest()
+            return novo_calculo == hash_armazenado
+            
+        except ValueError:
+            return False
 
 
 class UserModel:
