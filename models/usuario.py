@@ -1,6 +1,6 @@
-import hashlib
 import json
 import os
+import hashlib
 
 DATA_DIR = os.path.join(os.path.dirname(__file__), '..', 'data')
 
@@ -27,27 +27,30 @@ class Usuario:
             id=data['id'],
             nome=data['nome'],
             email=data['email'],
-            cpf=data['cpf'],
-            senha=data.get('senha', '')
+            cpf=data.get('cpf', ''), 
+            senha=data['senha']
         )
-
+    
     @staticmethod
     def hash_password(password):
+        """Criptografa a senha para não salvar texto puro"""
         return hashlib.sha256(password.encode()).hexdigest()
 
     @staticmethod
     def verify_password(stored_password, provided_password):
+        """Verifica se a senha digitada bate com a salva"""
         return stored_password == hashlib.sha256(provided_password.encode()).hexdigest()
 
+
 class UsuarioModel:
-    FILE_PATH = os.path.join(DATA_DIR, 'usuarios.json')
+    FILE_PATH = os.path.join(DATA_DIR, 'users.json')
 
     def __init__(self):
         if not os.path.exists(DATA_DIR):
             os.makedirs(DATA_DIR)
-        self.usuarios = self._load()
+        self.usuarios = self._carregar()
 
-    def _load(self):
+    def _carregar(self):
         if not os.path.exists(self.FILE_PATH):
             return []
         try:
@@ -57,27 +60,16 @@ class UsuarioModel:
         except (json.JSONDecodeError, FileNotFoundError):
             return []
 
-    def _save(self):
+    def _salvar(self):
         with open(self.FILE_PATH, 'w', encoding='utf-8') as f:
             json.dump([u.to_dict() for u in self.usuarios], f, indent=4, ensure_ascii=False)
 
     def pegar_todos(self):
         return self.usuarios
 
-    def buscar_por_id(self, id_usuario):
-        return next((u for u in self.usuarios if u.id == id_usuario), None)
-
     def adicionar(self, usuario):
         self.usuarios.append(usuario)
-        self._save()
+        self._salvar()
 
-    def atualizar(self, usuario_atualizado):
-        for i, usuario in enumerate(self.usuarios):
-            if usuario.id == usuario_atualizado.id:
-                self.usuarios[i] = usuario_atualizado
-                self._save()
-                break
-
-    def remover(self, id_usuario):
-        self.usuarios = [u for u in self.usuarios if u.id != id_usuario]
-        self._save()
+    def buscar_por_id(self, user_id):
+        return next((u for u in self.usuarios if u.id == user_id), None)
