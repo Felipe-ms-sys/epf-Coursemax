@@ -28,5 +28,9 @@ class DisciplinaService:
         self.disciplina_model.adicionar(nova_disciplina)
         return nova_disciplina
     
+    def atualizar(self, dados_disciplina):
+        disciplina = Disciplina.from_dict(dados_disciplina)
+        self.disciplina_model.atualizar(disciplina)
+
     def remover(self, id_disciplina):
         self.disciplina_model.remover(id_disciplina)
