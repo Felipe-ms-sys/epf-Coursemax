@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Cadastro - Passo 1</title>
+    <link rel="icon" type="image/jpg" href="/static/img/logo-new.jpg">
     <style>
         :root {
             --primary-color: #1ABC9C;
@@ -60,15 +61,18 @@
         label { display: block; margin-bottom: 5px; color: var(--text-dark); font-weight: 600; font-size: 14px; }
         
         input {
-            width: 100%; padding: 12px; border: 2px solid #e0e0e0; border-radius: var(--radius);
+            width: 100%;
+            padding: 12px; border: 2px solid #e0e0e0; border-radius: var(--radius);
             font-size: 15px; transition: all 0.3s;
         }
         input:focus { border-color: var(--primary-color); outline: none; }
 
         .btn-next {
-            width: 100%; padding: 14px; background: var(--secondary-color); color: white;
+            width: 100%;
+            padding: 14px; background: var(--secondary-color); color: white;
             border: none; border-radius: var(--radius); font-size: 16px; font-weight: 600;
-            cursor: pointer; margin-top: 10px; transition: all 0.3s;
+            cursor: pointer; margin-top: 10px;
+            transition: all 0.3s;
         }
         .btn-next:hover { background: var(--primary-dark); transform: translateY(-2px); }
 
@@ -83,6 +87,10 @@
     <div class="connector"></div>
 
     <div class="container">
+        <div style="text-align: center; margin-bottom: 20px;">
+            <img src="/static/img/logo-new.jpg" alt="Logo" style="width: 80px; height: 80px; border-radius: 50%; object-fit: cover;">
+        </div>
+
         <h1>Criar Conta</h1>
         <p class="subtitle">Passo 1 de 2 - Seus Dados</p>
 
@@ -122,12 +130,12 @@
         </form>
 
         <div class="login-link">
-            Já tem uma conta? <a href="/login">Fazer Login</a>
+            Já tem uma conta?
+            <a href="/login">Fazer Login</a>
         </div>
     </div>
 
     <script>
-
         function mascaraCPF(i){
             var v = i.value;
             if(isNaN(v[v.length-1])){
@@ -141,27 +149,22 @@
 
         function goToStep2(e) {
             e.preventDefault();
-            
             const name = document.getElementById('name').value;
             const cpf = document.getElementById('cpf').value;
             const email = document.getElementById('email').value;
             const pass = document.getElementById('password').value;
             const confirm = document.getElementById('confirmPassword').value;
-
             if (pass !== confirm) {
                 document.getElementById('passError').style.display = 'block';
                 return;
             }
 
-            // Remove pontos e traços do CPF antes de salvar
             const cpfLimpo = cpf.replace(/\D/g, '');
-
             if (cpfLimpo.length !== 11) {
                 alert('CPF inválido! Digite os 11 números.');
                 return;
             }
 
-            // Salva CPF junto com os outros dados
             const userData = { name, cpf: cpfLimpo, email, pass };
             localStorage.setItem('tempUserData', JSON.stringify(userData));
 
