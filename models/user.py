@@ -7,45 +7,68 @@ DATA_DIR = os.path.join(os.path.dirname(__file__), '..', 'data')
 class User:
     DOMINIOS_EMAIL = ['gmail.com', 'hotmail.com', 'outlook.com', 'yahoo.com']
 
-    def __init__(self, id, name, email, cpf, password):
+    def __init__(self, id, email, cpf, name=None, nome=None, password=None, senha=None, **kwargs):
         self.id = id
-        self.name = name
         self.email = email
         self.cpf = cpf
-        self.password = password
+        self.name = name or nome
+        self.password = password or senha
 
     def to_dict(self):
         return {
             'id': self.id,
-            'name': self.name,
+            'nome': self.name,
             'email': self.email,
             'cpf': self.cpf,
-            'password': self.password
+            'senha': self.password
         }
 
     @classmethod
     def from_dict(cls, data):
         return cls(
             id=data['id'],
-            name=data['name'],
+            name=data.get('name') or data.get('nome'),
             email=data['email'],
-            cpf=data['cpf'],
-            password=data.get('password', '')
+            cpf=data.get('cpf', ''),
+            password=data.get('password') or data.get('senha')
         )
+        
+    @staticmethod
+    def validate_email(email):
+        if not email or '@' not in email:
+            return False
+        try:
+            domain = email.split('@')[1]
+            return domain in User.DOMINIOS_EMAIL
+        except IndexError:
+            return False
+
+    @staticmethod
+    def validate_cpf(cpf):
+        return len(str(cpf)) == 11
+
+    @staticmethod
+    def hash_password(password):
+        return hashlib.sha256(password.encode()).hexdigest()
 
 
 class UserModel:
     FILE_PATH = os.path.join(DATA_DIR, 'users.json')
 
     def __init__(self):
+        if not os.path.exists(DATA_DIR):
+            os.makedirs(DATA_DIR)
         self.users = self._load()
 
     def _load(self):
         if not os.path.exists(self.FILE_PATH):
             return []
-        with open(self.FILE_PATH, 'r', encoding='utf-8') as f:
-            data = json.load(f)
-            return [User(**item) for item in data]
+        try:
+            with open(self.FILE_PATH, 'r', encoding='utf-8') as f:
+                data = json.load(f)
+                return [User(**item) for item in data]
+        except (json.JSONDecodeError, FileNotFoundError):
+            return []
 
     def _save(self):
         with open(self.FILE_PATH, 'w', encoding='utf-8') as f:
