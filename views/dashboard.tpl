@@ -59,6 +59,26 @@
             border: 2px solid var(--primary-color);
         }
 
+        .btn-add-new {
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 20px;
+            font-weight: bold;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: transform 0.2s;
+            margin-right: auto; 
+            margin-left: 20px;
+        }
+        .btn-add-new:hover {
+            transform: scale(1.05);
+            background: var(--primary-dark);
+        }
+
         .btn-logout {
             padding: 8px 16px;
             background: #fff;
@@ -214,6 +234,10 @@
             </svg>
         </div>
         
+        <button class="btn-add-new" onclick="openAddModal()">
+            <span>+</span> Nova Matéria
+        </button>
+
         <div class="user-info">
             <span style="font-weight: 600; color: #2C3E50;">Olá, <span id="userNameDisplay">{{user_name}}</span></span>
             <div class="user-avatar" id="userAvatarDisplay">{{user_name[0]}}</div>
@@ -283,12 +307,34 @@
     </div>
 </div>
 
+<div class="modal" id="addDisciplineModal">
+    <div class="modal-content" style="max-width: 400px;">
+        <div class="modal-header">
+            <h2 style="color: var(--secondary-color);">Nova Matéria</h2>
+            <button class="close-btn" onclick="closeAddModal()">×</button>
+        </div>
+        
+        <form action="/disciplinas/adicionar" method="POST" class="add-discipline-form">
+            <div style="margin-bottom: 15px;">
+                <label style="display:block; margin-bottom:5px; font-weight:600;">Nome da Matéria</label>
+                <input type="text" name="disciplineName" placeholder="Ex: História" required 
+                       style="width:100%; padding:10px; border:1px solid #ddd; border-radius:8px;">
+            </div>
+            
+            <div style="margin-bottom: 20px;">
+                <label style="display:block; margin-bottom:5px; font-weight:600;">Cor</label>
+                <input type="color" name="disciplineColor" value="#3498db" 
+                       style="width:100%; height:40px; border:none; cursor:pointer;">
+            </div>
+            
+            <button type="submit" class="btn-primary" style="width:100%; padding:12px;">Criar Matéria</button>
+        </form>
+    </div>
+</div>
+
 <script>
-    // --- ESTADO DA APLICAÇÃO ---
-    // AQUI ESTÁ A MÁGICA: O Python escreve o JSON direto na variável
     let disciplines = {{!disciplines_json}}; 
 
-    // Se vier vazio, inicia array vazio
     if (!disciplines) disciplines = [];
 
     let currentId = null;
@@ -298,8 +344,6 @@
     };
 
     function save() {
-        // Futuramente, você vai conectar isso com o Backend via AJAX/Fetch
-        // Por enquanto, só atualiza visualmente para não travar
         renderGrid();
         if(currentId) updateModalStats();
     }
@@ -364,8 +408,16 @@
         currentId = null;
     }
 
+    function openAddModal() {
+        document.getElementById('addDisciplineModal').classList.add('active');
+    }
+
+    function closeAddModal() {
+        document.getElementById('addDisciplineModal').classList.remove('active');
+    }
+
     function setTab(tabName) {
-        // UI das Abas
+       
         document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
         event.target.classList.add('active');
         
