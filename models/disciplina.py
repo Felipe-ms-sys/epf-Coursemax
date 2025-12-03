@@ -61,12 +61,25 @@ class DisciplinaModel:
         with open(self.FILE_PATH, 'w', encoding='utf-8') as f:
             json.dump([d.to_dict() for d in self.disciplinas], f, indent=4, ensure_ascii=False)
 
+    def pegar_todas(self):
+        return self.disciplinas
+
     def listar_por_usuario(self, id_usuario):
         return [d for d in self.disciplinas if d.id_usuario == id_usuario]
+
+    def buscar_por_id(self, id_disciplina):
+        return next((d for d in self.disciplinas if d.id == id_disciplina), None)
 
     def adicionar(self, disciplina):
         self.disciplinas.append(disciplina)
         self._salvar()
+    
+    def atualizar(self, disciplina_atualizada):
+        for i, d in enumerate(self.disciplinas):
+            if d.id == disciplina_atualizada.id:
+                self.disciplinas[i] = disciplina_atualizada
+                self._salvar()
+                break
 
     def remover(self, id_disciplina):
         self.disciplinas = [d for d in self.disciplinas if d.id != id_disciplina]
