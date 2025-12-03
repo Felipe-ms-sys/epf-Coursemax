@@ -39,7 +39,7 @@ class CadastroController(BaseController):
                 cpf_real, 
                 user_data['pass']
             )
-            
+    
             for disc in disciplines_data:
                  self.disciplina_service.criar_disciplina(
                     id_usuario=novo_usuario.id, 
@@ -49,6 +49,8 @@ class CadastroController(BaseController):
                     num_provas=2, 
                     metodo='Padrao'
                  )
+            
+            response.set_cookie("user_id", str(novo_usuario.id), secret='sua-chave-secreta-aqui')
                  
             return {'success': True}
 

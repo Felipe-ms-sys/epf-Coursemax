@@ -1,10 +1,10 @@
-from models.usuario import UsuarioModel, Usuario
+from models.user import UserModel, User
 
 class CadastroService:
     DOMINIOS_PERMITIDOS = ['gmail.com', 'hotmail.com', 'outlook.com', 'unb.br']
 
     def __init__(self):
-        self.usuario_model = UsuarioModel()
+        self.user_model = UserModel()
 
     def _validar_email(self, email):
         if not email or '@' not in email:
@@ -26,19 +26,27 @@ class CadastroService:
             raise ValueError("Nome e Senha são obrigatórios")
 
         if not self._validar_email(email):
-            raise ValueError(f"Domínio de e mail inválido")
+            raise ValueError(f"Domínio de email inválido. Permitidos: {', '.join(self.DOMINIOS_PERMITIDOS)}")
 
         if not self._validar_cpf(cpf):
             raise ValueError("CPF deve conter 11 dígitos numéricos")
 
-        usuarios = self.usuario_model.pegar_todos()
-        if any(u.email == email for u in usuarios):
+        users = self.user_model.get_all()
+        if any(u.email == email for u in users):
             raise ValueError("Email já cadastrado")
 
-        novo_id = max([u.id for u in usuarios], default=0) + 1
+        last_id = max([u.id for u in users], default=0) if users else 0
+        new_id = last_id + 1
         
-        senha_hash = Usuario.hash_password(senha)
+        senha_hash = User.hash_password(senha)
         
-        novo_usuario = Usuario(novo_id, nome, email, cpf, senha_hash)
-        self.usuario_model.adicionar(novo_usuario)
+        novo_usuario = User(
+            id=new_id, 
+            name=nome, 
+            email=email, 
+            cpf=cpf, 
+            password=senha_hash
+        )
+        
+        self.user_model.add_user(novo_usuario)
         return novo_usuario
