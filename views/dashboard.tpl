@@ -42,7 +42,7 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            backdrop-filter: blur(10px);
+            backdrop-filter: blur(10px); 
         }
 
         .logo-area svg { width: 40px; height: 40px; }
@@ -128,7 +128,7 @@
 
         .modal {
             display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(44, 62, 80, 0.8);
+            background: rgba(44, 62, 80, 0.8); 
             z-index: 1000; align-items: center; justify-content: center;
             opacity: 0; transition: opacity 0.3s;
         }
@@ -215,8 +215,8 @@
         </div>
         
         <div class="user-info">
-            <span style="font-weight: 600; color: #2C3E50;">Olá, <span id="userNameDisplay">Estudante</span></span>
-            <div class="user-avatar" id="userAvatarDisplay">E</div>
+            <span style="font-weight: 600; color: #2C3E50;">Olá, <span id="userNameDisplay">{{user_name}}</span></span>
+            <div class="user-avatar" id="userAvatarDisplay">{{user_name[0]}}</div>
             <button class="btn-logout" onclick="logout()">Sair</button>
         </div>
     </div>
@@ -284,20 +284,22 @@
 </div>
 
 <script>
-        let disciplines = {{!disciplines_json}}; 
+    // --- ESTADO DA APLICAÇÃO ---
+    // AQUI ESTÁ A MÁGICA: O Python escreve o JSON direto na variável
+    let disciplines = {{!disciplines_json}}; 
 
-            if (!disciplines) disciplines = [];
+    // Se vier vazio, inicia array vazio
+    if (!disciplines) disciplines = [];
+
     let currentId = null;
 
     window.onload = function() {
-        const user = localStorage.getItem('userName') || 'Visitante';
-        document.getElementById('userNameDisplay').textContent = user;
-        document.getElementById('userAvatarDisplay').textContent = user.charAt(0);
         renderGrid();
     };
 
     function save() {
-        localStorage.setItem('disciplines', JSON.stringify(disciplines));
+        // Futuramente, você vai conectar isso com o Backend via AJAX/Fetch
+        // Por enquanto, só atualiza visualmente para não travar
         renderGrid();
         if(currentId) updateModalStats();
     }
@@ -307,9 +309,10 @@
         grid.innerHTML = '';
 
         disciplines.forEach(d => {
-            const completedModules = d.modules.filter(m => m.done).length;
-            const progress = d.modules.length ? (completedModules / d.modules.length) * 100 : 0;
-            const freq = d.totalClasses ? (d.presences / d.totalClasses) * 100 : 100;
+            const completedModules = d.modules ? d.modules.filter(m => m.done).length : 0;
+            const totalModules = d.modules ? d.modules.length : 0;
+            const progress = totalModules ? (completedModules / totalModules) * 100 : 0;
+            const freq = d.horas ? (d.presencas / d.horas) * 100 : 100;
 
             let badgeClass = 'badge-good';
             if(freq < 75) badgeClass = 'badge-danger';
@@ -325,7 +328,7 @@
                     
                     <div class="info-row">
                         <span>Aulas Presenciais:</span>
-                        <strong>${d.presences}/${d.totalClasses}</strong>
+                        <strong>${d.presencas}/${d.horas}</strong>
                     </div>
                     
                     <div class="progress-container">
@@ -362,6 +365,7 @@
     }
 
     function setTab(tabName) {
+        // UI das Abas
         document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
         event.target.classList.add('active');
         
@@ -373,7 +377,7 @@
         const list = document.getElementById('modulesList');
         list.innerHTML = '';
         
-        if(data.modules.length === 0) {
+        if(!data.modules || data.modules.length === 0) {
             list.innerHTML = '<p style="text-align:center; color:#999; margin: 20px 0;">Nenhum conteúdo cadastrado.</p>';
             return;
         }
@@ -395,6 +399,8 @@
         if(!input.value) return;
 
         const disc = disciplines.find(d => d.id === currentId);
+        if (!disc.modules) disc.modules = [];
+        
         disc.modules.push({
             id: Date.now(),
             text: input.value,
@@ -411,7 +417,7 @@
         const mod = disc.modules.find(m => m.id === modId);
         mod.done = !mod.done;
         save();
-        renderModuleList(disc);
+        renderModuleList(disc); 
     }
 
     function deleteModule(modId) {
@@ -426,12 +432,12 @@
     function updateModalStats() {
         const disc = disciplines.find(d => d.id === currentId);
         
-        document.getElementById('totalClasses').textContent = disc.totalClasses;
-        document.getElementById('presentCount').textContent = disc.presences;
-        document.getElementById('absentCount').textContent = disc.absences;
-        document.getElementById('editTotalClasses').value = disc.totalClasses;
+        document.getElementById('totalClasses').textContent = disc.horas;
+        document.getElementById('presentCount').textContent = disc.presencas;
+        document.getElementById('absentCount').textContent = disc.faltas;
+        document.getElementById('editTotalClasses').value = disc.horas;
 
-        const freq = (disc.presences / disc.totalClasses) * 100;
+        const freq = disc.horas ? (disc.presencas / disc.horas) * 100 : 100;
         document.getElementById('percentage').textContent = freq.toFixed(1) + '%';
         
         const msgDiv = document.getElementById('frequencyMessage');
@@ -449,13 +455,13 @@
     function addAttendance(isPresent) {
         const disc = disciplines.find(d => d.id === currentId);
         
-        if(disc.presences + disc.absences >= disc.totalClasses) {
+        if(disc.presencas + disc.faltas >= disc.horas) {
             alert('Você atingiu o limite de aulas cadastradas para esta matéria. Aumente o "Total de aulas previstas" abaixo.');
             return;
         }
 
-        if(isPresent) disc.presences++;
-        else disc.absences++;
+        if(isPresent) disc.presencas++;
+        else disc.faltas++;
         
         save();
     }
@@ -464,14 +470,13 @@
         const val = parseInt(document.getElementById('editTotalClasses').value);
         if(val > 0) {
             const disc = disciplines.find(d => d.id === currentId);
-            disc.totalClasses = val;
+            disc.horas = val;
             save();
         }
     }
 
     function logout() {
-        localStorage.removeItem('userEmail');
-        window.location.href = 'login_screen_updated.html';
+        window.location.href = '/logout';
     }
 </script>
 
