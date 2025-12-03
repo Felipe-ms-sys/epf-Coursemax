@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Cadastro - Adicionar Disciplinas</title>
+    <link rel="icon" type="image/jpg" href="/static/img/logo-new.jpg">
     <style>
         :root {
             --primary-color: #1ABC9C;
@@ -59,30 +60,35 @@
         .add-discipline-form { display: flex; gap: 10px; margin-bottom: 20px; }
         
         .add-discipline-form input[type="text"] {
-            flex: 1; padding: 12px 15px; border: 2px solid #e0e0e0;
+            flex: 1;
+            padding: 12px 15px; border: 2px solid #e0e0e0;
             border-radius: var(--radius); font-size: 15px; transition: all 0.3s;
         }
         .add-discipline-form input:focus { outline: none; border-color: var(--primary-color); }
 
         .color-picker {
-            width: 50px; height: 46px; border: 2px solid #e0e0e0;
+            width: 50px;
+            height: 46px; border: 2px solid #e0e0e0;
             border-radius: var(--radius); cursor: pointer; padding: 2px;
         }
 
         .btn-add-disc {
-            padding: 0 20px; background: var(--primary-color); color: white;
+            padding: 0 20px;
+            background: var(--primary-color); color: white;
             border: none; border-radius: var(--radius); cursor: pointer;
             font-weight: 600; font-size: 20px; transition: all 0.3s;
         }
         .btn-add-disc:hover { background: var(--primary-dark); }
 
         .disciplines-list {
-            max-height: 250px; overflow-y: auto; margin-bottom: 25px;
+            max-height: 250px;
+            overflow-y: auto; margin-bottom: 25px;
             border: 1px solid #eee; border-radius: var(--radius); padding: 10px;
         }
 
         .discipline-item {
-            display: flex; align-items: center; justify-content: space-between;
+            display: flex;
+            align-items: center; justify-content: space-between;
             padding: 12px; background: #f8f9fa; border-radius: 8px; margin-bottom: 8px;
             animation: fadeIn 0.3s;
         }
@@ -91,11 +97,13 @@
         .discipline-info { display: flex; align-items: center; gap: 15px; }
         
         .discipline-color-badge {
-            width: 20px; height: 20px; border-radius: 50%; border: 2px solid white; box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            width: 20px;
+            height: 20px; border-radius: 50%; border: 2px solid white; box-shadow: 0 2px 4px rgba(0,0,0,0.1);
         }
 
         .btn-remove {
-            padding: 6px 12px; background: #fff; color: var(--danger); border: 1px solid var(--danger);
+            padding: 6px 12px;
+            background: #fff; color: var(--danger); border: 1px solid var(--danger);
             border-radius: 6px; cursor: pointer; font-size: 12px; font-weight: 600; transition: 0.2s;
         }
         .btn-remove:hover { background: var(--danger); color: white; }
@@ -103,9 +111,11 @@
         .empty-state { text-align: center; color: #95a5a6; padding: 30px 20px; }
 
         .btn-finish {
-            width: 100%; padding: 14px; background: linear-gradient(135deg, var(--secondary-color), var(--primary-color));
+            width: 100%;
+            padding: 14px; background: linear-gradient(135deg, var(--secondary-color), var(--primary-color));
             color: white; border: none; border-radius: var(--radius); font-size: 16px; font-weight: 600;
-            cursor: pointer; transition: all 0.3s;
+            cursor: pointer;
+            transition: all 0.3s;
         }
         .btn-finish:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(26, 188, 156, 0.3); }
         .btn-finish:disabled { background: #ccc; cursor: not-allowed; transform: none; box-shadow: none; }
@@ -119,10 +129,7 @@
 <body>
     <div class="cadastro-container">
         <div style="text-align: center; margin-bottom: 20px;">
-            <svg style="width: 60px; height: 60px;" viewBox="0 0 200 200">
-                <circle cx="100" cy="100" r="90" fill="#2C3E50"/>
-                <path d="M 65 105 L 95 135 L 145 75" fill="none" stroke="#1ABC9C" stroke-width="14" stroke-linecap="round" stroke-linejoin="round"/>
-            </svg>
+            <img src="/static/img/logo-new.jpg" alt="Logo" style="width: 60px; height: 60px; border-radius: 50%; object-fit: cover;">
         </div>
 
         <h1>Configurar Matérias</h1>
@@ -164,7 +171,7 @@
             const tempUser = localStorage.getItem('tempUserData');
             if (!tempUser) {
                 alert('Por favor, preencha seus dados primeiro.');
-                window.location.href = '/cadastro';
+                window.location.href = 'cadastro_step1.html';
             }
         }
 
@@ -174,7 +181,6 @@
             const name = nameInput.value.trim();
             
             if (!name) return alert('Digite o nome da disciplina!');
-
             disciplines.push({
                 id: nextId++,
                 name: name,
@@ -184,7 +190,6 @@
                 absences: 0,
                 totalClasses: 40
             });
-            
             nameInput.value = '';
             colorInput.value = '#' + Math.floor(Math.random()*16777215).toString(16);
             
@@ -200,7 +205,6 @@
 
         function renderDisciplines() {
             const list = document.getElementById('disciplinesList');
-            
             if (disciplines.length === 0) {
                 list.innerHTML = `<div class="empty-state"><p>Nenhuma matéria adicionada.</p></div>`;
                 return;
@@ -212,11 +216,11 @@
                     <div class="discipline-item">
                         <div class="discipline-info">
                             <div class="discipline-color-badge" style="background: ${disc.color}"></div>
-                            <span style="font-weight:500; color:#333">${disc.name}</span>
+                             <span style="font-weight:500; color:#333">${disc.name}</span>
                         </div>
                         <button class="btn-remove" onclick="removeDiscipline(${disc.id})">Remover</button>
                     </div>
-                `;
+                 `;
             });
         }
 
@@ -226,7 +230,6 @@
 
         function finishRegistration() {
             const userData = JSON.parse(localStorage.getItem('tempUserData'));
-            
             if (!userData) {
                 alert('Erro: Os dados pessoais não foram encontrados. Voltando ao Passo 1.');
                 window.location.href = '/cadastro';
@@ -237,12 +240,9 @@
                 user: userData,
                 disciplines: disciplines  
             };
-
             fetch('/cadastro/finalizar', {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
+                headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(payload)
             })
             .then(response => {
@@ -255,7 +255,6 @@
                 if (result.success) {
                     localStorage.removeItem('tempUserData');
                     localStorage.setItem('userName', userData.name); 
-                    
                     alert('Cadastro realizado com sucesso! Você será redirecionado.');
                     window.location.href = '/dashboard'; 
                 } else {
@@ -269,7 +268,7 @@
         }
 
         function goBack() {
-            window.location.href = '/cadastro';
+            window.location.href = 'cadastro_step1.html';
         }
 
         document.getElementById('disciplineName').addEventListener('keypress', function(e) {
