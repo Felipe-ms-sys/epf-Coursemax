@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Painel de Estudos</title>
+    <link rel="icon" type="image/jpg" href="/static/img/logo-new.jpg">
     <style>
         :root {
             --primary-color: #1ABC9C;
@@ -28,7 +29,7 @@
             min-height: 100vh;
             padding: 20px;
             color: #333;
-            overflow-y: scroll; 
+            overflow-y: scroll;
         }
 
         .container { max-width: 1200px; margin: 0 auto; }
@@ -42,15 +43,23 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            backdrop-filter: blur(10px); 
+            backdrop-filter: blur(10px);
         }
 
-        .logo-area svg { width: 40px; height: 40px; }
+        /* Ajuste para a imagem da logo */
+        .logo-area img { 
+            width: 50px; 
+            height: 50px;
+            border-radius: 50%;
+            object-fit: cover;
+            display: block;
+        }
 
         .user-info { display: flex; align-items: center; gap: 15px; }
 
         .user-avatar {
-            width: 45px; height: 45px;
+            width: 45px;
+            height: 45px;
             border-radius: 50%;
             background: var(--secondary-color);
             color: white;
@@ -117,27 +126,29 @@
         }
 
         .card-top-bar {
-            position: absolute; top: 0; left: 0; width: 100%; height: 6px;
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 6px;
         }
 
         .discipline-header {
-            display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;
+            display: flex;
+            justify-content: space-between; align-items: center; margin-bottom: 20px;
         }
 
         .discipline-name { font-size: 22px; font-weight: 700; color: var(--text-dark); }
         
         .info-row {
-            display: flex; justify-content: space-between;
+            display: flex;
+            justify-content: space-between;
             margin-bottom: 12px; font-size: 14px; color: #666;
         }
 
-        .progress-container {
-            margin-top: 15px;
-        }
+        .progress-container { margin-top: 15px; }
         .progress-label { display: flex; justify-content: space-between; font-size: 12px; margin-bottom: 5px; }
         
         .progress-bar {
-            width: 100%; height: 8px; background: #eee; border-radius: 10px; overflow: hidden;
+            width: 100%;
+            height: 8px; background: #eee; border-radius: 10px; overflow: hidden;
         }
         .progress-fill { height: 100%; border-radius: 10px; transition: width 0.5s ease; }
 
@@ -147,16 +158,19 @@
         .badge-danger { background: #f8d7da; color: #721c24; }
 
         .modal {
-            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            display: none;
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(44, 62, 80, 0.8); 
-            z-index: 1000; align-items: center; justify-content: center;
+            z-index: 1000; align-items: center;
+            justify-content: center;
             opacity: 0; transition: opacity 0.3s;
         }
 
         .modal.active { display: flex; opacity: 1; }
 
         .modal-content {
-            background: white; width: 90%; max-width: 700px;
+            background: white;
+            width: 90%; max-width: 700px;
             border-radius: 20px; padding: 30px;
             max-height: 85vh; overflow-y: auto;
             position: relative;
@@ -175,7 +189,8 @@
 
         .tabs { display: flex; gap: 10px; margin-bottom: 20px; background: #f1f2f6; padding: 5px; border-radius: 10px; }
         .tab {
-            flex: 1; padding: 10px; border: none; background: none;
+            flex: 1;
+            padding: 10px; border: none; background: none;
             cursor: pointer; border-radius: 8px; font-weight: 600; color: #666; transition: all 0.2s;
         }
         .tab.active { background: white; color: var(--primary-color); box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
@@ -185,7 +200,8 @@
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
         .module-item {
-            background: var(--grey-light); padding: 15px; border-radius: 10px;
+            background: var(--grey-light);
+            padding: 15px; border-radius: 10px;
             margin-bottom: 10px; display: flex; align-items: center; gap: 15px;
             transition: background 0.2s;
         }
@@ -204,7 +220,8 @@
         .add-form input:focus { border-color: var(--primary-color); outline: none; }
         
         .btn-primary {
-            background: var(--primary-color); color: white; border: none; padding: 0 25px;
+            background: var(--primary-color);
+            color: white; border: none; padding: 0 25px;
             border-radius: 8px; font-weight: bold; cursor: pointer;
         }
         .btn-primary:hover { background: var(--primary-dark); }
@@ -227,11 +244,7 @@
 <div class="container">
     <div class="header">
         <div class="logo-area">
-            <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg" style="width:50px; height:50px">
-                <circle cx="100" cy="100" r="90" fill="#2C3E50"/>
-                <circle cx="100" cy="100" r="85" fill="none" stroke="#1ABC9C" stroke-width="4"/>
-                <path d="M 65 105 L 95 135 L 145 75" fill="none" stroke="#1ABC9C" stroke-width="14" stroke-linecap="round" stroke-linejoin="round"/>
-            </svg>
+            <img src="/static/img/logo-new.jpg" alt="Logo">
         </div>
         
         <button class="btn-add-new" onclick="openAddModal()">
@@ -262,7 +275,6 @@
 
         <div id="tab-content" class="tab-content active">
             <div id="modulesList"></div>
-            
             <form class="add-form" onsubmit="addModule(event)">
                 <input type="text" id="newModuleInput" placeholder="Novo tópico ou assunto..." required>
                 <button type="submit" class="btn-primary">Adicionar</button>
@@ -292,12 +304,8 @@
             <div id="frequencyMessage" style="margin-bottom: 20px; padding: 10px; border-radius: 8px; font-size: 14px; text-align: center;"></div>
 
             <div class="freq-actions">
-                <button class="btn-action btn-present" onclick="addAttendance(true)">
-                    <span>✓</span> Presente
-                </button>
-                <button class="btn-action btn-absent" onclick="addAttendance(false)">
-                    <span>✕</span> Faltei
-                </button>
+                <button class="btn-action btn-present" onclick="addAttendance(true)"><span>✓</span> Presente</button>
+                <button class="btn-action btn-absent" onclick="addAttendance(false)"><span>✕</span> Faltei</button>
             </div>
             
             <div style="margin-top: 20px; text-align: center;">
@@ -317,16 +325,12 @@
         <form action="/disciplinas/adicionar" method="POST" class="add-discipline-form">
             <div style="margin-bottom: 15px;">
                 <label style="display:block; margin-bottom:5px; font-weight:600;">Nome da Matéria</label>
-                <input type="text" name="disciplineName" placeholder="Ex: História" required 
-                       style="width:100%; padding:10px; border:1px solid #ddd; border-radius:8px;">
+                <input type="text" name="disciplineName" placeholder="Ex: História" required style="width:100%; padding:10px; border:1px solid #ddd; border-radius:8px;">
             </div>
-            
             <div style="margin-bottom: 20px;">
                 <label style="display:block; margin-bottom:5px; font-weight:600;">Cor</label>
-                <input type="color" name="disciplineColor" value="#3498db" 
-                       style="width:100%; height:40px; border:none; cursor:pointer;">
+                <input type="color" name="disciplineColor" value="#3498db" style="width:100%; height:40px; border:none; cursor:pointer;">
             </div>
-            
             <button type="submit" class="btn-primary" style="width:100%; padding:12px;">Criar Matéria</button>
         </form>
     </div>
@@ -334,14 +338,10 @@
 
 <script>
     let disciplines = {{!disciplines_json}}; 
-
     if (!disciplines) disciplines = [];
-
     let currentId = null;
 
-    window.onload = function() {
-        renderGrid();
-    };
+    window.onload = function() { renderGrid(); };
 
     function save() {
         renderGrid();
@@ -351,7 +351,6 @@
     function renderGrid() {
         const grid = document.getElementById('grid');
         grid.innerHTML = '';
-
         disciplines.forEach(d => {
             const completedModules = d.modules ? d.modules.filter(m => m.done).length : 0;
             const totalModules = d.modules ? d.modules.length : 0;
@@ -369,12 +368,10 @@
                         <span class="discipline-name">${d.name}</span>
                         <span class="badge ${badgeClass}">${freq.toFixed(0)}% Freq.</span>
                     </div>
-                    
                     <div class="info-row">
                         <span>Aulas Presenciais:</span>
                         <strong>${d.presencas}/${d.horas}</strong>
                     </div>
-                    
                     <div class="progress-container">
                         <div class="progress-label">
                             <span>Progresso do Conteúdo</span>
@@ -392,14 +389,10 @@
     function openModal(id) {
         currentId = id;
         const data = disciplines.find(d => d.id === id);
-        
         document.getElementById('modalTitle').textContent = data.name;
         document.getElementById('modalTitle').style.color = data.color;
-        
         renderModuleList(data);
-        
         updateModalStats();
-        
         document.getElementById('detailsModal').classList.add('active');
     }
 
@@ -417,10 +410,8 @@
     }
 
     function setTab(tabName) {
-       
         document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
         event.target.classList.add('active');
-        
         document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
         document.getElementById(`tab-${tabName}`).classList.add('active');
     }
@@ -428,12 +419,10 @@
     function renderModuleList(data) {
         const list = document.getElementById('modulesList');
         list.innerHTML = '';
-        
         if(!data.modules || data.modules.length === 0) {
             list.innerHTML = '<p style="text-align:center; color:#999; margin: 20px 0;">Nenhum conteúdo cadastrado.</p>';
             return;
         }
-
         data.modules.forEach(m => {
             list.innerHTML += `
                 <div class="module-item">
@@ -449,16 +438,9 @@
         e.preventDefault();
         const input = document.getElementById('newModuleInput');
         if(!input.value) return;
-
         const disc = disciplines.find(d => d.id === currentId);
         if (!disc.modules) disc.modules = [];
-        
-        disc.modules.push({
-            id: Date.now(),
-            text: input.value,
-            done: false
-        });
-        
+        disc.modules.push({ id: Date.now(), text: input.value, done: false });
         input.value = '';
         save();
         renderModuleList(disc);
@@ -469,7 +451,7 @@
         const mod = disc.modules.find(m => m.id === modId);
         mod.done = !mod.done;
         save();
-        renderModuleList(disc); 
+        renderModuleList(disc);
     }
 
     function deleteModule(modId) {
@@ -483,7 +465,6 @@
 
     function updateModalStats() {
         const disc = disciplines.find(d => d.id === currentId);
-        
         document.getElementById('totalClasses').textContent = disc.horas;
         document.getElementById('presentCount').textContent = disc.presencas;
         document.getElementById('absentCount').textContent = disc.faltas;
@@ -506,15 +487,12 @@
 
     function addAttendance(isPresent) {
         const disc = disciplines.find(d => d.id === currentId);
-        
         if(disc.presencas + disc.faltas >= disc.horas) {
             alert('Você atingiu o limite de aulas cadastradas para esta matéria. Aumente o "Total de aulas previstas" abaixo.');
             return;
         }
-
         if(isPresent) disc.presencas++;
         else disc.faltas++;
-        
         save();
     }
 
