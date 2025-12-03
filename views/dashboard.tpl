@@ -400,6 +400,26 @@
     function save() {
         renderGrid();
         if(currentId) updateModalStats();
+
+        const disc = disciplines.find(d => d.id === currentId);
+        if (disc) {
+            fetch('/disciplinas/salvar', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(disc)
+            })
+            .then(response => response.json())
+            .then(data => {
+                if(!data.success) {
+                    console.error('Erro ao salvar:', data.error);
+                }
+            })
+            .catch(error => {
+                console.error('Erro de conexão:', error);
+            });
+        }
     }
 
     function renderGrid() {
@@ -640,7 +660,6 @@
 
     function deleteDiscipline() {
         if (!currentId) return;
-
         if (confirm('Tem certeza que deseja excluir esta matéria permanentemente? Todo o histórico de presenças e notas será perdido.')) {
             const form = document.createElement('form');
             form.method = 'POST';
