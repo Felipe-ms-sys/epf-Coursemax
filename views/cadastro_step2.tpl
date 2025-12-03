@@ -227,15 +227,45 @@
         function finishRegistration() {
             const userData = JSON.parse(localStorage.getItem('tempUserData'));
             
-            localStorage.setItem('userName', userData.name);
-            localStorage.setItem('userEmail', userData.email);
+            if (!userData) {
+                alert('Erro: Os dados pessoais não foram encontrados. Voltando ao Passo 1.');
+                window.location.href = '/cadastro';
+                return;
+            }
             
-            localStorage.setItem('disciplines', JSON.stringify(disciplines));
+            const payload = {
+                user: userData,
+                disciplines: disciplines  
+            };
 
-            localStorage.removeItem('tempUserData');
-
-            alert('Cadastro realizado com sucesso!');
-            window.location.href = '/dashboard';
+            fetch('/cadastro/finalizar', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(payload)
+            })
+            .then(response => {
+                if (response.status !== 200) {
+                    throw new Error('Erro de requisição. Status: ' + response.status);
+                }
+                return response.json();
+            })
+            .then(result => {
+                if (result.success) {
+                    localStorage.removeItem('tempUserData');
+                    localStorage.setItem('userName', userData.name); 
+                    
+                    alert('Cadastro realizado com sucesso! Você será redirecionado.');
+                    window.location.href = '/dashboard'; 
+                } else {
+                    alert('Erro no cadastro: ' + result.error);
+                }
+            })
+            .catch(error => {
+                console.error('Erro na requisição:', error);
+                alert('Erro ao comunicar com o servidor. Verifique a conexão e o console.');
+            });
         }
 
         function goBack() {
