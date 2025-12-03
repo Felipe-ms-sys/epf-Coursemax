@@ -1,16 +1,14 @@
-from models.usuario import UsuarioModel, Usuario
+from models.user import UserModel, User
 
 class LoginService:
     def __init__(self):
-        self.usuario_model = UsuarioModel()
+        self.user_model = UserModel()
 
     def autenticar(self, email, senha):
+        users = self.user_model.get_all()
+        user = next((u for u in users if u.email == email), None)
 
-        with open('data/usuarios.json', 'r', encoding='utf-8') as f:
+        if user and User.verify_password(user.password, senha):
+            return user
             
-            usuarios = self.usuario_model.pegar_todos()
-            usuario = next((u for u in usuarios if u.email == email), None)
-
-            if usuario and Usuario.verify_password(usuario.senha, senha):
-                return usuario
-            return None
+        return None
