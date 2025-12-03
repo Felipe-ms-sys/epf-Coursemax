@@ -164,7 +164,7 @@
             const tempUser = localStorage.getItem('tempUserData');
             if (!tempUser) {
                 alert('Por favor, preencha seus dados primeiro.');
-                window.location.href = 'cadastro_step1.html';
+                window.location.href = '/cadastro';
             }
         }
 
@@ -269,7 +269,7 @@
         }
 
         function goBack() {
-            window.location.href = 'cadastro_step1.html';
+            window.location.href = '/cadastro';
         }
 
         document.getElementById('disciplineName').addEventListener('keypress', function(e) {
