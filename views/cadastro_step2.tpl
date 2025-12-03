@@ -235,7 +235,7 @@
             localStorage.removeItem('tempUserData');
 
             alert('Cadastro realizado com sucesso!');
-            window.location.href = 'student_dashboard.html';
+            window.location.href = '/dashboard';
         }
 
         function goBack() {

@@ -139,7 +139,7 @@
             const userData = { name, email, pass };
             localStorage.setItem('tempUserData', JSON.stringify(userData));
 
-            window.location.href = 'cadastro_step2.html';
+            window.location.href = '/cadastro/disciplinas';
         }
     </script>
 </body>
