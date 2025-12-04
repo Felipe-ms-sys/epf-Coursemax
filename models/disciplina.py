@@ -1,10 +1,8 @@
 import json
-import os
-
-DATA_DIR = os.path.join(os.path.dirname(__file__), '..', 'data')
+from database import get_connection
 
 class Disciplina:
-    def __init__(self, id, id_usuario, nome, color, horas=60, presencas=0, faltas=0, modulos=None, provas = None):
+    def __init__(self, id, id_usuario, nome, color, horas=60, presencas=0, faltas=0, modulos=None, provas=None):
         self.id = id
         self.id_usuario = id_usuario
         self.nome = nome
@@ -26,8 +24,8 @@ class Disciplina:
             'faltas': self.faltas,
             'modules': self.modulos,
             'provas': self.provas
-        } 
-
+        }
+    
     @classmethod
     def from_dict(cls, data):
         nome_disciplina = data.get('name') or data.get('nome')
@@ -44,53 +42,79 @@ class Disciplina:
         )
 
 class DisciplinaModel:
-    FILE_PATH = os.path.join(DATA_DIR, 'disciplinas.json')
-
     def __init__(self):
-        if not os.path.exists(DATA_DIR):
-            os.makedirs(DATA_DIR)
-        self.disciplinas = self._carregar()
+        pass
 
-    def _carregar(self):
-        if not os.path.exists(self.FILE_PATH):
-            return []
-        try:
-            with open(self.FILE_PATH, 'r', encoding='utf-8') as f:
-                data = json.load(f)
-                return [Disciplina.from_dict(item) for item in data]
-        except (json.JSONDecodeError, FileNotFoundError):
-            return []
-
-    def _save(self):
-        with open(self.FILE_PATH, 'w', encoding='utf-8') as f:
-            json.dump([d.to_dict() for d in self.disciplinas], f, indent=4, ensure_ascii=False)
+    def _row_to_obj(self, r):
+        modulos_list = json.loads(r['modulos']) if r['modulos'] else []
+        provas_list = json.loads(r['provas']) if r['provas'] else []
+        
+        return Disciplina(
+            id=r['id'],
+            id_usuario=r['id_usuario'],
+            nome=r['nome'],
+            color=r['color'],
+            horas=r['horas'],
+            presencas=r['presencas'],
+            faltas=r['faltas'],
+            modulos=modulos_list,
+            provas=provas_list
+        )
 
     def pegar_todas(self):
-        self.disciplinas = self._carregar() 
-        return self.disciplinas
+        conn = get_connection()
+        cursor = conn.cursor()
+        cursor.execute("SELECT * FROM disciplinas")
+        rows = cursor.fetchall()
+        conn.close()
+        return [self._row_to_obj(r) for r in rows]
 
     def listar_por_usuario(self, id_usuario):
-        self.disciplinas = self._carregar()  
-        return [d for d in self.disciplinas if d.id_usuario == id_usuario]
+        conn = get_connection()
+        cursor = conn.cursor()
+        cursor.execute("SELECT * FROM disciplinas WHERE id_usuario = ?", (id_usuario,))
+        rows = cursor.fetchall()
+        conn.close()
+        return [self._row_to_obj(r) for r in rows]
 
     def buscar_por_id(self, id_disciplina):
-        self.disciplinas = self._carregar() 
-        return next((d for d in self.disciplinas if d.id == id_disciplina), None)
+        conn = get_connection()
+        cursor = conn.cursor()
+        cursor.execute("SELECT * FROM disciplinas WHERE id = ?", (id_disciplina,))
+        r = cursor.fetchone()
+        conn.close()
+        return self._row_to_obj(r) if r else None
 
-    def adicionar(self, disciplina):
-        self.disciplinas = self._carregar() 
-        self.disciplinas.append(disciplina)
-        self._save()
+    def adicionar(self, d):
+        conn = get_connection()
+        cursor = conn.cursor()
+        modulos_json = json.dumps(d.modulos)
+        provas_json = json.dumps(d.provas)
+        
+        cursor.execute('''
+            INSERT INTO disciplinas (id, id_usuario, nome, color, horas, presencas, faltas, modulos, provas)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+        ''', (d.id, d.id_usuario, d.nome, d.color, d.horas, d.presencas, d.faltas, modulos_json, provas_json))
+        conn.commit()
+        conn.close()
     
-    def atualizar(self, disciplina_atualizada):
-        self.disciplinas = self._carregar() 
-        for i, d in enumerate(self.disciplinas):
-            if d.id == disciplina_atualizada.id:
-                self.disciplinas[i] = disciplina_atualizada
-                self._save()
-                break
+    def atualizar(self, d):
+        conn = get_connection()
+        cursor = conn.cursor()
+        modulos_json = json.dumps(d.modulos)
+        provas_json = json.dumps(d.provas)
+
+        cursor.execute('''
+            UPDATE disciplinas 
+            SET nome=?, color=?, horas=?, presencas=?, faltas=?, modulos=?, provas=?
+            WHERE id=?
+        ''', (d.nome, d.color, d.horas, d.presencas, d.faltas, modulos_json, provas_json, d.id))
+        conn.commit()
+        conn.close()
 
     def remover(self, id_disciplina):
-        self.disciplinas = self._carregar() 
-        self.disciplinas = [d for d in self.disciplinas if d.id != id_disciplina]
-        self._save()
+        conn = get_connection()
+        cursor = conn.cursor()
+        cursor.execute("DELETE FROM disciplinas WHERE id=?", (id_disciplina,))
+        conn.commit()
+        conn.close()
