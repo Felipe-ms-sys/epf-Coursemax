@@ -1,8 +1,16 @@
-# Projeto Template: POO com Python + Bottle + JSON
+# 📈CourseMax: Sistema de gerenciamento acadêmico pessoal
 
-Este é um projeto de template educacional voltado para o ensino de **Programação Orientada a Objetos (POO)** do Prof. Lucas Boaventura, Universidade de Brasília (UnB).
+Este projeto foi desenvolvido como parte do projeto final da disciplina de Programação Orientada a Objetos. A aplicação segue uma arquitetura organizada em camadas (Models, Services, Controllers e Views) e utiliza o framework Bottle com JSON como banco de dados principal.
 
-Utiliza o microframework **Bottle**. Ideal para uso em disciplinas introdutórias de Engenharia de Software ou Ciência da Computação.
+A proposta deste projeto consistiu na criação de um sistema que facilite a organização acadêmica pessoal do usuário, permitindo-lhe reunir informações relacionadas à frequência, aos módulos disciplinares e às notas de provas.
+
+---
+
+## Membros da equipe:
+* **Felipe Melo de Sousa** - 2420215370 
+* **Gabriel Portacio Candeia Costa** - 242015488
+
+---
 
 ## 💡 Objetivo
 
@@ -13,93 +21,108 @@ Fornecer uma base simples, extensível e didática para construção de aplicaç
 ## 🗂 Estrutura de Pastas
 
 ```bash
-poo-python-bottle-template/
-├── app.py # Ponto de entrada do sistema
-├── config.py # Configurações e caminhos do projeto
-├── main.py # Inicialização da aplicação
-├── requirements.txt # Dependências do projeto
-├── README.md # Este arquivo
-├── controllers/ # Controladores e rotas
-├── models/ # Definição das entidades (ex: User)
-├── services/ # Lógica de persistência (JSON)
-├── views/ # Arquivos HTML (Bottle Templating)
-├── static/ # CSS, JS e imagens
-├── data/ # Arquivos JSON de dados
-└── .vscode/ # Configurações opcionais do VS Code
+CourseMax/
+├── app.py # Configuração principal e inicialização do Bottle
+├── main.py # Ponto de entrada da aplicação
+├── config.py # Configurações globais (banco, paths, chaves)
+├── requirements.txt # Dependências
+├── Makefile 
+│
+├── data/  
+│   ├── disciplinas.json # Armazenamento de disciplinas/módulos/notas
+│   └── users.json # Armazenamento de usuários cadastrados
+│
+├── models/
+│   ├── disciplina.py # Classes Disciplina e DisciplinaModel
+│   └── user.py # Classes User e UserModel
+│
+├── services/
+│   ├── cadastro_service.py # Validação de informações e criação de conta
+│   ├── disciplina_service.py   # Cria e manipula matérias
+│   ├── login_service.py        # Verificação de credenciais
+│   ├── study_service.py        # (Auxiliar) Serviços de estudo
+│   └── user_service.py         # Lógica CRUD para usuários
+│
+├── controllers/ # Camada de Controle (Rotas e requisições HTTP)
+│   ├── __init__.py
+│   ├── base_controller.py
+│   ├── cadastro_controller.py
+│   ├── disciplina_controller.py
+│   ├── login_controller.py
+│   ├── study_controller.py
+│   └── user_controller.py
+│
+├── views/
+│   ├── cadastro_step1.tpl
+│   ├── cadastro_step2.tpl
+│   ├── dashboard.tpl
+│   ├── helper-final.tpl
+│   ├── layout.tpl
+│   ├── login.tpl
+│   ├── user_form.tpl
+│   └── users.tpl
+│
+└── static/
+    ├── css/
+    │   ├── helper.css
+    │   └── style.css
+    ├── img/
+    │   ├── BottleLogo.png
+    │   └── logo-new.jpg
+    └── js/
+        ├── helper.js
+        └── main.js
 ```
 
-
 ---
 
-## 📁 Descrição das Pastas
+## ⚙️ Funcionalidades
 
-### `controllers/`
-Contém as classes responsáveis por lidar com as rotas da aplicação. Exemplos:
-- `user_controller.py`: rotas para listagem, adição, edição e remoção de usuários.
-- `base_controller.py`: classe base com utilitários comuns.
+### Autenticação
+* Login e logout
+* Cadastro
+* Hash de senhas com strings aleatórias
+* Verificação de formato para cpf e de domínios para email
 
-### `models/`
-Define as classes que representam os dados da aplicação. Exemplo:
-- `user.py`: classe `User`, com atributos como `id`, `name`, `email`, etc.
+### Usuários
+* CRUD de usuários 
+* Persistência dos dados no banco JSON
+* Exibição personalizada, nome e inicial no dashboard
 
-### `services/`
-Responsável por salvar, carregar e manipular dados usando arquivos JSON. Exemplo:
-- `user_service.py`: contém métodos como `get_all`, `add_user`, `delete_user`.
-
-### `views/`
-Contém os arquivos `.tpl` utilizados pelo Bottle como páginas HTML:
-- `layout.tpl`: estrutura base com navegação e bloco `content`.
-- `users.tpl`: lista os usuários.
-- `user_form.tpl`: formulário para adicionar/editar usuário.
-
-### `static/`
-Arquivos estáticos como:
-- `css/style.css`: estilos básicos.
-- `js/main.js`: scripts JS opcionais.
-- `img/BottleLogo.png`: exemplo de imagem.
-
-### `data/`
-Armazena os arquivos `.json` que simulam o banco de dados:
-- `users.json`: onde os dados dos usuários são persistidos.
-
+### Disciplinas
+* CRUD de disciplinas
+* Persistência dos dados no banco JSON
+* Controle de frequência, notas de avaliações e módulos disciplinares
+* Personalização por cor e cards únicos
 ---
 
-## ▶️ Como Executar
+## 🔧 Execução
 
-1. Crie o ambiente virtual na pasta fora do seu projeto:
+### 1. Clone o repositório
+
+```bash
+git clone https://github.com/Felipe-ms-sys/epf-Coursemax.git
+cd epf-Coursemax
+```
+### 2. Crie um ambiente virtual
 ```bash
 python -m venv venv
+venv\\Scripts\\activate  # Windows
+# ou
 source venv/bin/activate  # Linux/Mac
-venv\\Scripts\\activate     # Windows
 ```
-
-2. Entre dentro do seu projeto criado a partir do template e instale as dependências:
+### 3. Instale as dependências
 ```bash
 pip install -r requirements.txt
 ```
 
-3. Rode a aplicação:
+### 4. Execute a aplicação
 ```bash
 python main.py
 ```
 
-4. Accese sua aplicação no navegador em: [http://localhost:8080](http://localhost:8080)
+### 5. Abra o navegador
+```bash
+Acesse sua aplicação em http://localhost:8080
+```
 
----
-
-## ✍️ Personalização
-Para adicionar novos modelos (ex: Atividades):
-
-1. Crie a classe no diretório **models/**.
-
-2. Crie o service correspondente para manipulação do JSON.
-
-3. Crie o controller com as rotas.
-
-4. Crie as views .tpl associadas.
-
----
-
-## 🧠 Autor e Licença
-Projeto desenvolvido como template didático para disciplinas de Programação Orientada a Objetos, baseado no [BMVC](https://github.com/hgmachine/bmvc_start_from_this).
-Você pode reutilizar, modificar e compartilhar livremente.
