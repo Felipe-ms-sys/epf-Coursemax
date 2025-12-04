@@ -1,8 +1,5 @@
-import json
-import os
-import hashlib
-
-DATA_DIR = os.path.join(os.path.dirname(__file__), '..', 'data')
+import sqlite3
+from database import get_connection
 
 class User:
     DOMINIOS_EMAIL = ['gmail.com', 'hotmail.com', 'outlook.com', 'yahoo.com', 'unb.br']
@@ -13,35 +10,13 @@ class User:
         self.cpf = cpf
         self.name = name or nome
         self.password = password or senha
-
-    def to_dict(self):
-        return {
-            'id': self.id,
-            'nome': self.name,
-            'email': self.email,
-            'cpf': self.cpf,
-            'senha': self.password
-        }
-
-    @classmethod
-    def from_dict(cls, data):
-        return cls(
-            id=data['id'],
-            name=data.get('name') or data.get('nome'),
-            email=data['email'],
-            cpf=data.get('cpf', ''),
-            password=data.get('password') or data.get('senha')
-        )
         
     @staticmethod
     def validate_email(email):
-        if not email or '@' not in email:
-            return False
+        if not email or '@' not in email: return False
         try:
-            domain = email.split('@')[1]
-            return domain in User.DOMINIOS_EMAIL
-        except IndexError:
-            return False
+            return email.split('@')[1] in User.DOMINIOS_EMAIL
+        except IndexError: return False
 
     @staticmethod
     def validate_cpf(cpf):
@@ -49,70 +24,62 @@ class User:
 
     @staticmethod
     def hash_password(password):
+        import hashlib, os
         salt = os.urandom(16).hex()
-        combinacao = salt + password
-        hash_result = hashlib.sha256(combinacao.encode()).hexdigest()
+        hash_result = hashlib.sha256((salt + password).encode()).hexdigest()
         return f"{salt}${hash_result}"
 
     @staticmethod
     def verify_password(stored_password, provided_password):
+        import hashlib
         try:
-            if '$' not in stored_password:
-                return stored_password == hashlib.sha256(provided_password.encode()).hexdigest()
-
             salt, hash_armazenado = stored_password.split('$')
-            combinacao = salt + provided_password
-            novo_calculo = hashlib.sha256(combinacao.encode()).hexdigest()
-            return novo_calculo == hash_armazenado
-            
-        except ValueError:
-            return False
-
+            return hashlib.sha256((salt + provided_password).encode()).hexdigest() == hash_armazenado
+        except ValueError: return False
 
 class UserModel:
-    FILE_PATH = os.path.join(DATA_DIR, 'users.json')
-
     def __init__(self):
-        if not os.path.exists(DATA_DIR):
-            os.makedirs(DATA_DIR)
-        self.users = self._load()
-
-    def _load(self):
-        if not os.path.exists(self.FILE_PATH):
-            return []
-        try:
-            with open(self.FILE_PATH, 'r', encoding='utf-8') as f:
-                data = json.load(f)
-                return [User.from_dict(item) for item in data]
-        except (json.JSONDecodeError, FileNotFoundError):
-            return []
-
-    def _save(self):
-        with open(self.FILE_PATH, 'w', encoding='utf-8') as f:
-            json.dump([u.to_dict() for u in self.users], f, indent=4, ensure_ascii=False)
+        pass
 
     def get_all(self):
-        self.users = self._load() 
-        return self.users
+        conn = get_connection()
+        cursor = conn.cursor()
+        cursor.execute("SELECT * FROM users")
+        rows = cursor.fetchall()
+        conn.close()
+        
+        return [User(id=r['id'], name=r['name'], email=r['email'], cpf=r['cpf'], password=r['password']) for r in rows]
 
     def get_by_id(self, user_id):
-        self.users = self._load() 
-        return next((u for u in self.users if u.id == user_id), None)
+        conn = get_connection()
+        cursor = conn.cursor()
+        cursor.execute("SELECT * FROM users WHERE id = ?", (user_id,))
+        r = cursor.fetchone()
+        conn.close()
+        
+        if r:
+            return User(id=r['id'], name=r['name'], email=r['email'], cpf=r['cpf'], password=r['password'])
+        return None
 
     def add_user(self, user):
-        self.users = self._load() 
-        self.users.append(user)
-        self._save()
+        conn = get_connection()
+        cursor = conn.cursor()
+        cursor.execute("INSERT INTO users (id, name, email, cpf, password) VALUES (?, ?, ?, ?, ?)",
+                       (user.id, user.name, user.email, user.cpf, user.password))
+        conn.commit()
+        conn.close()
 
-    def update_user(self, updated_user):
-        self.users = self._load() 
-        for i, user in enumerate(self.users):
-            if user.id == updated_user.id:
-                self.users[i] = updated_user
-                self._save()
-                break
+    def update_user(self, user):
+        conn = get_connection()
+        cursor = conn.cursor()
+        cursor.execute("UPDATE users SET name=?, email=?, cpf=? WHERE id=?",
+                       (user.name, user.email, user.cpf, user.id))
+        conn.commit()
+        conn.close()
 
     def delete_user(self, user_id):
-        self.users = self._load() 
-        self.users = [u for u in self.users if u.id != user_id]
-        self._save()
+        conn = get_connection()
+        cursor = conn.cursor()
+        cursor.execute("DELETE FROM users WHERE id=?", (user_id,))
+        conn.commit()
+        conn.close()
